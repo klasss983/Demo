@@ -1,0 +1,55 @@
+//
+# Demo.lab
+
+C:/windows/system32/drivers/etc/hosts
+
+# hosts
+
+192.168.2.3 iwtm.demo.lab
+//
+
+mkdir ssl
+
+cd ssl
+
+# Создание корневого сертификат
+
+openssl req -x509 -newkey rsa:4096 -days 3650 -keyout rootca.key -out rootca.crt
+# Создание сертификата сервера
+
+openssl req -newkey rsa:4096 -keyout server.key -out server.csr
+openssl x509 -req -in server.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -days 365 -out server.crt
+# Создание сертификтаа клиента
+
+openssl req -newkey rsa:4096 -keyout client.key -out client.csr
+openssl x509 -req -in client.csr -CA rootca.crt -CAkey rootca.key -CAcreateserial -days 365 -out client.crt
+# Создание документа с паролем для работы nginx
+
+nano cert.pass
+xxXX1234
+# pkcs12 client
+
+openssl pkcs12 -export -in client.crt -inkey client.key -certfile rootca.crt -out client.p12
+
+# Nginx conf (/etc/nginx/conf.d/iwtm.conf)
+ssl_certificate /root/ssl/server.crt;
+ssl_certificate_key /root/ssl/server.key;
+ssl_verify_depth 2;
+ssl_password_file /root/ssl/cert.pass;
+ssl_client_certificate /root/ssl/rootca.crt;
+ssl_verify_client on;
+
+# CMD:
+scp root@192.168.2.3(IP):/root/ssl/client.p12(file) "C:/Share"
+scp root@192.168.2.3(IP):/root/ssl/rootca.cert(key)(file) "C:/Share"
+scp root@192.168.2.3(IP):/root/ssl/server.cert(key)(file) "C:/Share"
+
+Установка сертификатов
+
+# iwtm.demo.lab
+
+https://iwtm.demo.lab
+or 
+192.168.x.3
+
+select cert
