@@ -1,0 +1,6 @@
+cat /opt/iw/tm5/etc/consul/consul.json
+
+nano /opt/iw/tm5/etc/web.conf
+
+New-NetFirewallRule -Action Allow -Direction Inbound -Name "Crawler1337" -DisplayName "Crawler1337" -Profile Any -Protocol TCP -LocalPort 1337
+New-NetFirewallRule -Action Allow -Direction Inbound -Name "Crawler6556" -DisplayName "Crawler6556" -Profile Any -Protocol TCP -LocalPort 6556
